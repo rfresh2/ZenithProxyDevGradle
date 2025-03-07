@@ -6,7 +6,7 @@ plugins {
 
 group = "com.zenith"
 version = "1.0.0-SNAPSHOT"
-val pluginId = "zenithproxy-dev"
+val pluginId = "zenithproxy.plugin.dev"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,6 @@ java {
 }
 
 gradlePlugin {
-    // Define the plugin
     val zenithPlugin by plugins.creating {
         id = pluginId
         implementationClass = "com.zenith.ZenithProxyDevGradlePlugin"

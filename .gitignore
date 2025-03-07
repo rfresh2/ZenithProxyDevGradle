@@ -24,6 +24,7 @@ __pycache__/
 maps/
 replays/
 plugins/
+.kotlin/
 
 dataGenerator/run
 /dataGenerator/.gradle
