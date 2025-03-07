@@ -36,4 +36,7 @@ jobs:
           path: build/libs/*.jar
 
       - name: Publish to Maven
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
         run: ./gradlew publish
