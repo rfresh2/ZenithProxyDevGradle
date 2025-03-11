@@ -29,9 +29,7 @@ abstract class ZenithProxyDevExtension(project: Project) {
     init {
         runDirectory.convention(project.layout.projectDirectory.dir("run"))
         generateTemplateTask.convention(true)
-        templateProperties.convention(mutableMapOf(
-            "version" to project.version
-        ))
+        templateProperties.convention(mutableMapOf())
         autoDependencies.convention(true)
         javaReleaseVersion.convention(JavaLanguageVersion.of(21))
     }

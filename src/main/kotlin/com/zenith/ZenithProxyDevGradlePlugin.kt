@@ -1,5 +1,6 @@
 package com.zenith
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -7,7 +8,6 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
@@ -18,12 +18,9 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply("java")
         project.plugins.apply("org.jetbrains.gradle.plugin.idea-ext")
+        project.plugins.apply("com.gradleup.shadow")
         val extension = project.extensions.create("zenithProxy", ZenithProxyDevExtension::class.java, project)
         project.repositories.apply {
-            mavenLocal()
-            maven {
-                it.url("https://maven.2b2t.vc/releases")
-            }
             maven { mvn ->
                 mvn.url("https://libraries.minecraft.net")
                 mvn.mavenContent { content ->
@@ -58,12 +55,21 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
             }
             mavenCentral()
         }
+        val shade = project.configurations.create("shade")
+        project.configurations.getByName("implementation").extendsFrom(shade)
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
         val mainSourceSet = sourceSets.getByName("main")
+        project.tasks.withType(ShadowJar::class.java) {
+            it.configurations = listOf(shade)
+            it.archiveClassifier.set("")
+            project.tasks.getByName("build").dependsOn(it)
+        }
+        project.tasks.getByName("jar").enabled = false
+        val shadowTask = project.tasks.withType(ShadowJar::class.java).first()
         val copyPluginTask = project.tasks.register("copyPlugin", Copy::class.java) {
             it.group = "run"
             it.description = "Copy Plugin To Run Directory"
-            it.from(project.tasks.getByName("jar").outputs.files) {
+            it.from(shadowTask.archiveFile) {
                 it.include("*.jar")
                 it.rename("(.*)", "plugin.jar")
             }
@@ -103,27 +109,26 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
                     add("annotationProcessor", zenithMavenCoordinates)
                 }
             }
+            project.tasks.withType(ShadowJar::class.java) {
+                it.manifest {
+                    it.attributes(mapOf(
+                        "Date" to OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC).toString(),
+                        "MC-Version" to extension.mc.get()
+                    ))
+                }
+            }
             copyPluginTask.configure {
                 it.into(extension.runDirectory.get().dir("plugins"))
             }
             runTask.configure {
                 it.workingDir = extension.runDirectory.get().asFile
             }
-
             if (extension.generateTemplateTask.get()) {
                 templateTask.configure {
                     val props = extension.templateProperties.get()
                     it.inputs.properties(props)
                     it.expand(props)
                     it.enabled = true
-                }
-            }
-            project.tasks.withType(Jar::class.java) {
-                it.manifest { // metadata about the plugin build
-                    it.attributes(mapOf(
-                        "Date" to OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC).toString(),
-                        "MC-Version" to extension.mc.get()
-                    ))
                 }
             }
             project.plugins.getPlugin(IdeaPlugin::class.java).model.module {
