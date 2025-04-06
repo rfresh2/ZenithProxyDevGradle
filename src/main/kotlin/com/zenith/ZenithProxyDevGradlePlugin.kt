@@ -20,6 +20,9 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         project.plugins.apply("org.jetbrains.gradle.plugin.idea-ext")
         project.plugins.apply("com.gradleup.shadow")
         val extension = project.extensions.create("zenithProxy", ZenithProxyDevExtension::class.java, project)
+        val zenithDepConfig = project.configurations.create("zenithProxy")
+        project.configurations.getByName("implementation").extendsFrom(zenithDepConfig)
+        project.configurations.getByName("annotationProcessor").extendsFrom(zenithDepConfig)
         val shade = project.configurations.create("shade")
         project.configurations.getByName("implementation").extendsFrom(shade)
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
@@ -67,18 +70,10 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
             it.dependsOn(templateTask)
         }
         project.afterEvaluate {
-            if (extension.autoDependencies.get()) {
-                val zenithMavenCoordinates = "com.zenith:ZenithProxy:${extension.mc.get()}-SNAPSHOT"
-                project.dependencies.apply {
-                    add("implementation", zenithMavenCoordinates)
-                    add("annotationProcessor", zenithMavenCoordinates)
-                }
-            }
             project.tasks.withType(ShadowJar::class.java) {
                 it.manifest {
                     it.attributes(mapOf(
                         "Date" to OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC).toString(),
-                        "MC-Version" to extension.mc.get()
                     ))
                 }
             }

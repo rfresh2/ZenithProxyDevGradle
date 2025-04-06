@@ -9,9 +9,6 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 abstract class ZenithProxyDevExtension(project: Project) {
     @get:Input
-    abstract val mc: Property<String> // todo: enum?
-
-    @get:Input
     abstract val runDirectory: DirectoryProperty
 
     @get:Input
@@ -21,16 +18,12 @@ abstract class ZenithProxyDevExtension(project: Project) {
     abstract val templateProperties: MapProperty<String, Any>
 
     @get:Input
-    abstract val autoDependencies: Property<Boolean>
-
-    @get:Input
     abstract val javaReleaseVersion: Property<JavaLanguageVersion>
 
     init {
         runDirectory.convention(project.layout.projectDirectory.dir("run"))
         generateTemplateTask.convention(true)
         templateProperties.convention(mutableMapOf())
-        autoDependencies.convention(true)
         javaReleaseVersion.convention(JavaLanguageVersion.of(21))
     }
 }
