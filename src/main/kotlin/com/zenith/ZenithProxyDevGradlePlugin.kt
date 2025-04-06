@@ -19,7 +19,7 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         project.plugins.apply("java")
         project.plugins.apply("org.jetbrains.gradle.plugin.idea-ext")
         project.plugins.apply("com.gradleup.shadow")
-        val extension = project.extensions.create("zenithProxy", ZenithProxyDevExtension::class.java, project)
+        val extension = project.extensions.create("zenithProxyPlugin", ZenithProxyDevExtension::class.java, project)
         val zenithDepConfig = project.configurations.create("zenithProxy")
         project.configurations.getByName("implementation").extendsFrom(zenithDepConfig)
         project.configurations.getByName("annotationProcessor").extendsFrom(zenithDepConfig)
