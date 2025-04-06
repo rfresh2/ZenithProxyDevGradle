@@ -20,41 +20,6 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         project.plugins.apply("org.jetbrains.gradle.plugin.idea-ext")
         project.plugins.apply("com.gradleup.shadow")
         val extension = project.extensions.create("zenithProxy", ZenithProxyDevExtension::class.java, project)
-        project.repositories.apply {
-            maven { mvn ->
-                mvn.url("https://libraries.minecraft.net")
-                mvn.mavenContent { content ->
-                    content.includeGroup("com.mojang")
-                }
-            }
-            maven { mvn ->
-                mvn.url("https://repo.opencollab.dev/maven-releases/")
-                mvn.mavenContent { content ->
-                    content.includeGroupByRegex("org.cloudburstmc.*")
-                }
-            }
-            maven { mvn ->
-                mvn.url("https://repo.papermc.io/repository/maven-public/")
-                mvn.mavenContent { content ->
-                    content.includeGroup("com.velocitypowered")
-                }
-            }
-            maven { mvn ->
-                mvn.url("https://repo.viaversion.com")
-                mvn.mavenContent { content ->
-                    content.includeGroup("com.viaversion")
-                    content.includeGroup("net.raphimc")
-                }
-            }
-            maven { mvn ->
-                mvn.url("https://maven.lenni0451.net/releases")
-                mvn.mavenContent { content ->
-                    content.includeGroup("net.raphimc")
-                    content.includeGroup("net.lenni0451")
-                }
-            }
-            mavenCentral()
-        }
         val shade = project.configurations.create("shade")
         project.configurations.getByName("implementation").extendsFrom(shade)
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
