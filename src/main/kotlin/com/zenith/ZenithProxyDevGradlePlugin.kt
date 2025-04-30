@@ -13,6 +13,7 @@ import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.util.concurrent.TimeUnit
 
 class ZenithProxyDevGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
@@ -23,6 +24,7 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         val zenithDepConfig = project.configurations.create("zenithProxy")
         project.configurations.getByName("implementation").extendsFrom(zenithDepConfig)
         project.configurations.getByName("annotationProcessor").extendsFrom(zenithDepConfig)
+        zenithDepConfig.resolutionStrategy.cacheDynamicVersionsFor(1, TimeUnit.HOURS)
         val shade = project.configurations.create("shade")
         project.configurations.getByName("implementation").extendsFrom(shade)
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
