@@ -24,7 +24,10 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         val zenithDepConfig = project.configurations.create("zenithProxy")
         project.configurations.getByName("implementation").extendsFrom(zenithDepConfig)
         project.configurations.getByName("annotationProcessor").extendsFrom(zenithDepConfig)
-        zenithDepConfig.resolutionStrategy.cacheDynamicVersionsFor(1, TimeUnit.HOURS)
+        project.configurations.forEach {
+            it.resolutionStrategy.cacheDynamicVersionsFor(1, TimeUnit.HOURS)
+            it.resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.HOURS)
+        }
         val shade = project.configurations.create("shade")
         project.configurations.getByName("implementation").extendsFrom(shade)
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
