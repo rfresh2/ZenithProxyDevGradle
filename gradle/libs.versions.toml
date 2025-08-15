@@ -1,6 +1,6 @@
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.2.0" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.2.10" }
 
 [libraries]
 idea-ext = { module = "org.jetbrains.gradle.plugin.idea-ext:org.jetbrains.gradle.plugin.idea-ext.gradle.plugin", version = "1.2" }
-shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version = "8.3.8" }
+shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version = "9.0.2" }

@@ -33,7 +33,7 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
         val mainSourceSet = sourceSets.getByName("main")
         project.tasks.withType(ShadowJar::class.java) {
-            it.configurations = listOf(shade)
+            it.configurations.set(listOf(shade))
             it.archiveClassifier.set("")
             project.tasks.getByName("build").dependsOn(it)
         }
