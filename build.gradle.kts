@@ -2,6 +2,7 @@ plugins {
     `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
     `maven-publish`
+    `jvm-test-suite`
 }
 
 group = "com.zenith"
@@ -26,6 +27,14 @@ gradlePlugin {
     val zenithPlugin by plugins.creating {
         id = pluginId
         implementationClass = "com.zenith.ZenithProxyDevGradlePlugin"
+    }
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
     }
 }
 
