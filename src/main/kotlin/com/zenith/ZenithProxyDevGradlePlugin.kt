@@ -48,14 +48,13 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
             }
             it.dependsOn(project.tasks.getByName("build"))
         }
-        val buildPath = project.layout.buildDirectory.asFile.get().path
         val runTask = project.tasks.register("run", JavaExec::class.java) {
             it.group = "run"
             it.description = "Execute ZenithProxy With Plugin"
             it.classpath = mainSourceSet.runtimeClasspath
-                // filter out duplicate classpath entries
-                // we want zenith to load our plugin classes from the run directory like it would in prod
-                .filter { file -> !file.path.contains(buildPath) }
+                // only main zenithproxy jar and dependencies
+                // i.e. filter out entire plugin classes and shaded dependencies
+                .filter { file -> zenithDepConfig.contains(file) }
             it.mainClass.set("com.zenith.Proxy")
             it.jvmArgs = listOf("-Xmx300m", "-XX:+UseG1GC")
             it.standardInput = System.`in`
