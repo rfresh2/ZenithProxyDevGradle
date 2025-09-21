@@ -57,6 +57,9 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
                 .filter { file -> zenithDepConfig.contains(file) }
             it.mainClass.set("com.zenith.Proxy")
             it.jvmArgs = listOf("-Xmx300m", "-XX:+UseG1GC")
+            if (it.javaVersion.majorVersion.toInt() >= 24) {
+                it.jvmArgs("--sun-misc-unsafe-memory-access=allow", "--enable-native-access=ALL-UNNAMED")
+            }
             it.standardInput = System.`in`
             it.environment("ZENITH_DEV", "true")
             it.dependsOn(copyPluginTask)
