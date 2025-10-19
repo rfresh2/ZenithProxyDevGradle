@@ -51,10 +51,9 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         val runTask = project.tasks.register("run", JavaExec::class.java) {
             it.group = "run"
             it.description = "Execute ZenithProxy With Plugin"
-            it.classpath = mainSourceSet.runtimeClasspath
-                // only main zenithproxy jar and dependencies
-                // i.e. filter out entire plugin classes and shaded dependencies
-                .filter { file -> zenithDepConfig.contains(file) }
+            // only main zenithproxy jar and dependencies
+            // i.e. plugin classes and shaded deps to be read by zenith classloader on plugin.jar
+            it.classpath = zenithDepConfig
             it.mainClass.set("com.zenith.Proxy")
             it.jvmArgs = listOf("-Xmx300m", "-XX:+UseG1GC")
             if (it.javaVersion.majorVersion.toInt() >= 24) {
