@@ -3,12 +3,12 @@ package com.zenith
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.internal.DefaultTaskExecutionRequest
+import java.lang.Boolean.parseBoolean
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
@@ -109,9 +109,5 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
 }
 
 fun ideaSyncActive(): Boolean {
-    return System.getProperty("idea.sync.active") != null
-}
-
-fun MavenArtifactRepository.url(url: Any) {
-    setUrl(url)
+    return parseBoolean(System.getProperty("idea.sync.active"))
 }
