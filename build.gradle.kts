@@ -15,7 +15,6 @@ repositories {
 }
 
 dependencies {
-    api(libs.idea.ext)
     api(libs.shadow)
 }
 

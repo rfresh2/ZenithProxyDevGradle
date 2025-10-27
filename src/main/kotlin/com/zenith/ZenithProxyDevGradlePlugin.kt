@@ -8,9 +8,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.plugins.ide.idea.IdeaPlugin
-import org.jetbrains.gradle.ext.settings
-import org.jetbrains.gradle.ext.taskTriggers
+import org.gradle.internal.DefaultTaskExecutionRequest
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
@@ -18,7 +16,6 @@ import java.util.concurrent.TimeUnit
 class ZenithProxyDevGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply("java")
-        project.plugins.apply("org.jetbrains.gradle.plugin.idea-ext")
         project.plugins.apply("com.gradleup.shadow")
         val extension = project.extensions.create("zenithProxyPlugin", ZenithProxyDevExtension::class.java, project)
         val zenithDepConfig = project.configurations.create("zenithProxy")
@@ -72,7 +69,6 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
             it.enabled = false
         }
         mainSourceSet.java.srcDir(templateTask.map { it.outputs })
-        project.plugins.getPlugin(IdeaPlugin::class.java).model.project.settings.taskTriggers.afterSync(templateTask)
         project.tasks.withType(JavaCompile::class.java) {
             it.dependsOn(templateTask)
         }
@@ -97,10 +93,12 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
                     it.expand(props)
                     it.enabled = true
                 }
-            }
-            project.plugins.getPlugin(IdeaPlugin::class.java).model.module {
-                it.excludeDirs.add(extension.runDirectory.get().asFile)
-                it.excludeDirs.add(project.layout.projectDirectory.dir(".idea").asFile)
+                if (ideaSyncActive()) {
+                    val startParameter = project.gradle.startParameter
+                    val taskRequests = startParameter.taskRequests.toMutableList()
+                    taskRequests += DefaultTaskExecutionRequest(listOf(templateTask.name))
+                    startParameter.setTaskRequests(taskRequests)
+                }
             }
             project.tasks.withType(JavaCompile::class.java) {
                 it.options.encoding = "UTF-8"
@@ -108,6 +106,10 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
             }
         }
     }
+}
+
+fun ideaSyncActive(): Boolean {
+    return System.getProperty("idea.sync.active") != null
 }
 
 fun MavenArtifactRepository.url(url: Any) {
