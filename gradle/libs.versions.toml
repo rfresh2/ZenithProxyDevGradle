@@ -2,4 +2,4 @@
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.2.21" }
 
 [libraries]
-shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version = "9.2.2" }
+shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version = "9.3.0" }
