@@ -30,68 +30,68 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
         val sourceSets = (project.extensions.getByName("sourceSets") as SourceSetContainer)
         val mainSourceSet = sourceSets.getByName("main")
         project.tasks.withType(ShadowJar::class.java) {
-            it.configurations.set(listOf(shade))
-            it.archiveClassifier.set("")
-            project.tasks.getByName("build").dependsOn(it)
+            configurations.set(listOf(shade))
+            archiveClassifier.set("")
+            project.tasks.getByName("build").dependsOn(this)
         }
         project.tasks.getByName("jar").enabled = false
         val shadowTask = project.tasks.withType(ShadowJar::class.java).first()
         val copyPluginTask = project.tasks.register("copyPlugin", Copy::class.java) {
-            it.group = "run"
-            it.description = "Copy Plugin To Run Directory"
-            it.from(shadowTask.archiveFile) {
-                it.include("*.jar")
-                it.rename("(.*)", "plugin.jar")
+            group = "run"
+            description = "Copy Plugin To Run Directory"
+            from(shadowTask.archiveFile) {
+                include("*.jar")
+                rename("(.*)", "plugin.jar")
             }
-            it.dependsOn(project.tasks.getByName("build"))
+            dependsOn(project.tasks.getByName("build"))
         }
         val runTask = project.tasks.register("run", JavaExec::class.java) {
-            it.group = "run"
-            it.description = "Execute ZenithProxy With Plugin"
+            group = "run"
+            description = "Execute ZenithProxy With Plugin"
             // only main zenithproxy jar and dependencies
             // i.e. plugin classes and shaded deps to be read by zenith classloader on plugin.jar
-            it.classpath = zenithDepConfig
-            it.mainClass.set("com.zenith.Proxy")
-            it.jvmArgs = listOf("-Xmx300m", "-XX:+UseG1GC")
-            if (it.javaVersion.majorVersion.toInt() >= 24) {
-                it.jvmArgs("--sun-misc-unsafe-memory-access=allow", "--enable-native-access=ALL-UNNAMED")
+            classpath = zenithDepConfig
+            mainClass.set("com.zenith.Proxy")
+            jvmArgs = listOf("-Xmx300m", "-XX:+UseG1GC")
+            if (javaVersion.majorVersion.toInt() >= 24) {
+                jvmArgs("--sun-misc-unsafe-memory-access=allow", "--enable-native-access=ALL-UNNAMED")
             }
-            it.standardInput = System.`in`
-            it.environment("ZENITH_DEV", "true")
-            it.dependsOn(copyPluginTask)
+            standardInput = System.`in`
+            environment("ZENITH_DEV", "true")
+            dependsOn(copyPluginTask)
         }
         val templateTask = project.tasks.register("generateTemplates", Copy::class.java) {
-            it.group = "build"
-            it.description = "Generates class templates"
+            group = "build"
+            description = "Generates class templates"
 
-            it.from(project.file("src/main/templates"))
-            it.into(project.layout.buildDirectory.dir("generated/sources/templates"))
-            it.enabled = false
+            from(project.file("src/main/templates"))
+            into(project.layout.buildDirectory.dir("generated/sources/templates"))
+            enabled = false
         }
         mainSourceSet.java.srcDir(templateTask.map { it.outputs })
         project.tasks.withType(JavaCompile::class.java) {
-            it.dependsOn(templateTask)
+            dependsOn(templateTask)
         }
         project.afterEvaluate {
             project.tasks.withType(ShadowJar::class.java) {
-                it.manifest {
-                    it.attributes(mapOf(
+                manifest {
+                    attributes(mapOf(
                         "Date" to OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC).toString(),
                     ))
                 }
             }
             copyPluginTask.configure {
-                it.into(extension.runDirectory.get().dir("plugins"))
+                into(extension.runDirectory.get().dir("plugins"))
             }
             runTask.configure {
-                it.workingDir = extension.runDirectory.get().asFile
+                workingDir = extension.runDirectory.get().asFile
             }
             if (extension.generateTemplateTask.get()) {
                 templateTask.configure {
                     val props = extension.templateProperties.get()
-                    it.inputs.properties(props)
-                    it.expand(props)
-                    it.enabled = true
+                    inputs.properties(props)
+                    expand(props)
+                    enabled = true
                 }
                 if (ideaSyncActive()) {
                     val startParameter = project.gradle.startParameter
@@ -101,8 +101,8 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
                 }
             }
             project.tasks.withType(JavaCompile::class.java) {
-                it.options.encoding = "UTF-8"
-                it.options.release.set(extension.javaReleaseVersion.get().asInt())
+                options.encoding = "UTF-8"
+                options.release.set(extension.javaReleaseVersion.get().asInt())
             }
         }
     }

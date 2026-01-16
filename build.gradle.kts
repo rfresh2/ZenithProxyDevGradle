@@ -1,6 +1,6 @@
 plugins {
     `java-gradle-plugin`
-    alias(libs.plugins.kotlin.jvm)
+    `kotlin-dsl`
     `maven-publish`
     `jvm-test-suite`
 }
