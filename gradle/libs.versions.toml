@@ -1,2 +1,2 @@
 [libraries]
-shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version = "9.4.1" }
+shadow = { module = "com.gradleup.shadow:com.gradleup.shadow.gradle.plugin", version = "9.4.2" }
