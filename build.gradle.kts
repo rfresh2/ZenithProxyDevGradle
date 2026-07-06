@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
@@ -20,6 +24,23 @@ dependencies {
 
 java {
     withSourcesJar()
+}
+
+kotlin {
+    explicitApi()
+    val jdkRelease = "17"
+    compilerOptions {
+        allWarningsAsErrors = true
+        // https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+        apiVersion = KotlinVersion.KOTLIN_2_3
+        languageVersion = apiVersion
+        jvmTarget = JvmTarget.fromTarget(jdkRelease)
+        jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
+        freeCompilerArgs.add("-Xjdk-release=$jdkRelease")
+    }
+    target.compilations.configureEach {
+        compileJavaTaskProvider { options.release = jdkRelease.toInt() }
+    }
 }
 
 gradlePlugin {

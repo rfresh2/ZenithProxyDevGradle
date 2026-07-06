@@ -7,18 +7,18 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
-abstract class ZenithProxyDevExtension(project: Project) {
+public abstract class ZenithProxyDevExtension(project: Project) {
     @get:Input
-    abstract val runDirectory: DirectoryProperty
+    public abstract val runDirectory: DirectoryProperty
 
     @get:Input
-    abstract val generateTemplateTask: Property<Boolean>
+    public abstract val generateTemplateTask: Property<Boolean>
 
     @get:Input
-    abstract val templateProperties: MapProperty<String, Any>
+    public abstract val templateProperties: MapProperty<String, Any>
 
     @get:Input
-    abstract val javaReleaseVersion: Property<JavaLanguageVersion>
+    public abstract val javaReleaseVersion: Property<JavaLanguageVersion>
 
     init {
         runDirectory.convention(project.layout.projectDirectory.dir("run"))

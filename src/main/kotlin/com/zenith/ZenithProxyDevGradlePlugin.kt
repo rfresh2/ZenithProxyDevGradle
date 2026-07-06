@@ -14,7 +14,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
 
-class ZenithProxyDevGradlePlugin: Plugin<Project> {
+public class ZenithProxyDevGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         if (GradleVersion.current() < GradleVersion.version("9.6.1")) {
             throw RuntimeException("ZenithProxyDevGradlePlugin requires Gradle 9.6.1 or higher")
@@ -112,6 +112,6 @@ class ZenithProxyDevGradlePlugin: Plugin<Project> {
     }
 }
 
-fun ideaSyncActive(): Boolean {
+private fun ideaSyncActive(): Boolean {
     return parseBoolean(System.getProperty("idea.sync.active"))
 }
