@@ -12,13 +12,12 @@ import org.example.module.ExampleModule;
 import org.example.module.ExampleWanderModule;
 
 @Plugin(
-    id = "example-plugin",
+    id = BuildConstants.PLUGIN_ID,
     version = BuildConstants.VERSION,
     description = "ZenithProxy Example Plugin",
     url = "https://github.com/rfresh2/ZenithProxyExamplePlugin",
     authors = {"rfresh2"},
-    mcVersions = {"1.21.4"} // to indicate any MC version: @Plugin(mcVersions = "*")
-                            // if you touch packet classes, you almost certainly need to pin to a single mc version
+    mcVersions = {BuildConstants.MC_VERSION} // to indicate any MC version: @Plugin(mcVersions = "*")
 )
 public class ExamplePlugin implements ZenithProxyPlugin {
     // public static for simple access from modules and commands
@@ -31,7 +30,7 @@ public class ExamplePlugin implements ZenithProxyPlugin {
         LOG = pluginAPI.getLogger();
         LOG.info("Example Plugin loading...");
         // initialize any configurations before modules or commands might need to read them
-        PLUGIN_CONFIG = pluginAPI.registerConfig("example-plugin", ExampleConfig.class);
+        PLUGIN_CONFIG = pluginAPI.registerConfig(BuildConstants.PLUGIN_ID, ExampleConfig.class);
         pluginAPI.registerModule(new ExampleModule());
         pluginAPI.registerModule(new ExampleESPModule());
         pluginAPI.registerModule(new ExampleWanderModule());

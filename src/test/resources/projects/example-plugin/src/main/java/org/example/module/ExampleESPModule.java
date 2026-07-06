@@ -20,6 +20,7 @@ public class ExampleESPModule extends Module {
         return ExamplePlugin.PLUGIN_CONFIG.esp;
     }
 
+    // packets from player to zenith
     @Override
     public PacketHandlerCodec registerServerPacketHandlerCodec() {
         return PacketHandlerCodec.serverBuilder()
@@ -39,6 +40,14 @@ public class ExampleESPModule extends Module {
                 .build())
             .build();
     }
+
+    // to handle packets from zenith to server
+//    @Override
+//    public PacketHandlerCodec registerClientPacketHandlerCodec() {
+//        return PacketHandlerCodec.clientBuilder()
+//            ...
+//            .build();
+//    }
 
 
     // this can also be moved to a separate class file

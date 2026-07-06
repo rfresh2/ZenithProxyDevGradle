@@ -8,6 +8,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.internal.DefaultTaskExecutionRequest
+import org.gradle.util.GradleVersion
 import java.lang.Boolean.parseBoolean
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -15,6 +16,9 @@ import java.util.concurrent.TimeUnit
 
 class ZenithProxyDevGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
+        if (GradleVersion.current() < GradleVersion.version("9.6.1")) {
+            throw RuntimeException("ZenithProxyDevGradlePlugin requires Gradle 9.6.1 or higher")
+        }
         project.plugins.apply("java")
         project.plugins.apply("com.gradleup.shadow")
         val extension = project.extensions.create("zenithProxyPlugin", ZenithProxyDevExtension::class.java, project)

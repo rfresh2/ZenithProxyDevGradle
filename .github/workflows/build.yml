@@ -37,3 +37,4 @@ jobs:
         with:
           name: plugin
           path: build/libs/*.jar
+          if-no-files-found: error

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.zenith"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.1-SNAPSHOT"
 val pluginId = "zenithproxy.plugin.dev"
 
 repositories {
@@ -23,7 +23,7 @@ java {
 }
 
 gradlePlugin {
-    val zenithPlugin by plugins.creating {
+    val zenithPlugin = plugins.create(pluginId) {
         id = pluginId
         implementationClass = "com.zenith.ZenithProxyDevGradlePlugin"
     }
@@ -31,7 +31,7 @@ gradlePlugin {
 
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
+        val test = getByName<JvmTestSuite>("test") {
             useJUnitJupiter()
         }
     }

@@ -3,7 +3,9 @@ package org.example;
 /**
  * Example configuration POJO.
  *
- * Configurations are saved and loaded to JSON files
+ * Configurations are saved and loaded to JSON files.
+ *
+ * Save and load is handled automatically, happens on every command execution, proxy start/stop, etc.
  *
  * All fields should be public and mutable.
  *
