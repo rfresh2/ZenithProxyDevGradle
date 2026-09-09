@@ -20,10 +20,14 @@ public abstract class ZenithProxyDevExtension(project: Project) {
     @get:Input
     public abstract val javaReleaseVersion: Property<JavaLanguageVersion>
 
+    @get:Input
+    public abstract val runTaskMixinLauncher: Property<Boolean>
+
     init {
         runDirectory.convention(project.layout.projectDirectory.dir("run"))
         generateTemplateTask.convention(true)
         templateProperties.convention(mutableMapOf())
         javaReleaseVersion.convention(JavaLanguageVersion.of(21))
+        runTaskMixinLauncher.convention(true)
     }
 }

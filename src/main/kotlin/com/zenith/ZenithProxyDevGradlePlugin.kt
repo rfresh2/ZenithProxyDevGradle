@@ -55,10 +55,12 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
             // only main zenithproxy jar and dependencies
             // i.e. plugin classes and shaded deps to be read by zenith classloader on plugin.jar
             classpath = zenithDepConfig
-            mainClass.set("com.zenith.Proxy")
             jvmArgs = listOf("-Xmx300m", "-XX:+UseG1GC")
             if (javaVersion.majorVersion.toInt() >= 24) {
-                jvmArgs("--sun-misc-unsafe-memory-access=allow", "--enable-native-access=ALL-UNNAMED")
+                jvmArgs("-XX:+UseCompactObjectHeaders", "--sun-misc-unsafe-memory-access=allow", "--enable-native-access=ALL-UNNAMED")
+            }
+            if (javaVersion.majorVersion.toInt() >= 26) {
+                jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
             }
             standardInput = System.`in`
             environment("ZENITH_DEV", "true")
@@ -89,6 +91,10 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
             }
             runTask.configure {
                 workingDir = extension.runDirectory.get().asFile
+                mainClass.set(
+                    if (extension.runTaskMixinLauncher.get()) "com.zenith.ProxyLaunchWrapper"
+                    else "com.zenith.Proxy"
+                )
             }
             if (extension.generateTemplateTask.get()) {
                 templateTask.configure {
