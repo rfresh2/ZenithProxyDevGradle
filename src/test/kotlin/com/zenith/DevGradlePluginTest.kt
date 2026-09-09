@@ -9,7 +9,7 @@ import java.io.File
 class DevGradlePluginTest {
 
     @ParameterizedTest
-    @ValueSource(strings = ["9.6.0", "9.6.1"])
+    @ValueSource(strings = ["9.7.0", "9.7.1"])
     fun examplePluginTest(gradleVersion: String) {
         val tmpDir = File("build/tmp/example-plugin")
         tmpDir.deleteRecursively()
@@ -26,7 +26,7 @@ class DevGradlePluginTest {
             .forwardOutput()
             .withDebug(true);
 
-        if (gradleVersion == "9.6.0") {
+        if (gradleVersion == "9.7.0") {
             val result = runnerBuilder.buildAndFail()
             assertTrue(result.output.contains("BUILD FAILED"), "Build should fail")
         } else {

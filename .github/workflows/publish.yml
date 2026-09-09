@@ -36,6 +36,15 @@ jobs:
           path: build/libs/*.jar
           if-no-files-found: error
 
+      - name: Get Plugin Version
+        run: echo "PLUGIN_VERSION=$(grep '^plugin_version=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_ENV
+
+      - name: Publish Plugin Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.PLUGIN_VERSION }}
+          generateReleaseNotes: true
+
       - name: Publish to Maven
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}

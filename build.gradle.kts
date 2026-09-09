@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.zenith"
-version = "1.0.1-SNAPSHOT"
+version = property("plugin_version") as String
 val pluginId = "zenithproxy.plugin.dev"
 
 repositories {

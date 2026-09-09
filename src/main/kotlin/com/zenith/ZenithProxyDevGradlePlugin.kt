@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit
 
 public class ZenithProxyDevGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        if (GradleVersion.current() < GradleVersion.version("9.6.1")) {
-            throw RuntimeException("ZenithProxyDevGradlePlugin requires Gradle 9.6.1 or higher")
+        if (GradleVersion.current() < GradleVersion.version("9.7.1")) {
+            throw RuntimeException("ZenithProxyDevGradlePlugin requires Gradle 9.7.1 or higher")
         }
         project.plugins.apply("java")
         project.plugins.apply("com.gradleup.shadow")
