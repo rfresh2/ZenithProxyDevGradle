@@ -19,9 +19,11 @@ public abstract class ZenithProxyDevExtension(project: Project) {
     }
 
     @get:Input
+    @Deprecated("Migrate to buildConstants generator")
     public abstract val generateTemplateTask: Property<Boolean>
 
     @get:Input
+    @Deprecated("Migrate to buildConstants generator")
     public abstract val templateProperties: MapProperty<String, Any>
 
     @get:Input
