@@ -47,6 +47,7 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
                 include("*.jar")
                 rename("(.*)", "plugin.jar")
             }
+            into(extension.runDirectory.dir("plugins"))
             dependsOn(project.tasks.getByName("build"))
         }
         val runTask = project.tasks.register("run", JavaExec::class.java) {
@@ -62,6 +63,11 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
             if (javaVersion.majorVersion.toInt() >= 26) {
                 jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
             }
+            workingDirectory.set(extension.runDirectory)
+            mainClass.set(extension.runTaskMixinLauncher.map { mixinLauncher ->
+                if (mixinLauncher) "com.zenith.ProxyLaunchWrapper"
+                else "com.zenith.Proxy"
+            })
             standardInput = System.`in`
             environment("ZENITH_DEV", "true")
             dependsOn(copyPluginTask)
@@ -76,6 +82,8 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
         }
         mainSourceSet.java.srcDir(templateTask.map { it.outputs })
         project.tasks.withType(JavaCompile::class.java) {
+            options.encoding = "UTF-8"
+            options.release.set(extension.javaReleaseVersion.map { it.asInt() })
             dependsOn(templateTask)
         }
         project.afterEvaluate {
@@ -85,16 +93,6 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
                         "Date" to OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC).toString(),
                     ))
                 }
-            }
-            copyPluginTask.configure {
-                into(extension.runDirectory.get().dir("plugins"))
-            }
-            runTask.configure {
-                workingDir = extension.runDirectory.get().asFile
-                mainClass.set(
-                    if (extension.runTaskMixinLauncher.get()) "com.zenith.ProxyLaunchWrapper"
-                    else "com.zenith.Proxy"
-                )
             }
             if (extension.generateTemplateTask.get()) {
                 templateTask.configure {
@@ -109,10 +107,6 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
                     taskRequests += DefaultTaskExecutionRequest(listOf(templateTask.name))
                     startParameter.setTaskRequests(taskRequests)
                 }
-            }
-            project.tasks.withType(JavaCompile::class.java) {
-                options.encoding = "UTF-8"
-                options.release.set(extension.javaReleaseVersion.get().asInt())
             }
         }
     }
