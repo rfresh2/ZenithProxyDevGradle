@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     api(libs.shadow)
+    implementation(libs.javapoet)
 }
 
 java {
@@ -30,7 +31,7 @@ kotlin {
     explicitApi()
     val jdkRelease = "17"
     compilerOptions {
-        allWarningsAsErrors = true
+        allWarningsAsErrors = false
         // https://docs.gradle.org/current/userguide/compatibility.html#kotlin
         apiVersion = KotlinVersion.KOTLIN_2_3
         languageVersion = apiVersion

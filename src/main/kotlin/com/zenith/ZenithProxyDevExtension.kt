@@ -1,5 +1,6 @@
 package com.zenith
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.MapProperty
@@ -10,6 +11,12 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 public abstract class ZenithProxyDevExtension(project: Project) {
     @get:Input
     public abstract val runDirectory: DirectoryProperty
+
+    public val buildConstants: BuildConstantsExtension = project.objects.newInstance(BuildConstantsExtension::class.java)
+
+    public fun buildConstants(action: Action<BuildConstantsExtension>) {
+        action.execute(buildConstants)
+    }
 
     @get:Input
     public abstract val generateTemplateTask: Property<Boolean>

@@ -81,6 +81,15 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
             enabled = false
         }
         mainSourceSet.java.srcDir(templateTask.map { it.outputs })
+        val buildConstantsTask = project.tasks.register("generateBuildConstants", GenerateBuildConstants::class.java) {
+            group = "build"
+            description = "Generate BuildConstants class"
+            className.set(extension.buildConstants.className)
+            packageGroup.set(extension.buildConstants.packageGroup)
+            fields.set(extension.buildConstants.fields)
+            outputDirectory.convention(project.layout.buildDirectory.dir("generated/sources/buildConstants/java/main"))
+        }
+        mainSourceSet.java.srcDir(buildConstantsTask.flatMap { it.outputDirectory })
         project.tasks.withType(JavaCompile::class.java) {
             options.encoding = "UTF-8"
             options.release.set(extension.javaReleaseVersion.map { it.asInt() })
@@ -92,6 +101,14 @@ public class ZenithProxyDevGradlePlugin: Plugin<Project> {
                     attributes(mapOf(
                         "Date" to OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC).toString(),
                     ))
+                }
+            }
+            buildConstantsTask.configure {
+                if (ideaSyncActive() && extension.buildConstants.fields.get().isNotEmpty()) {
+                    val startParameter = project.gradle.startParameter
+                    val taskRequests = startParameter.taskRequests.toMutableList()
+                    taskRequests += DefaultTaskExecutionRequest(listOf(buildConstantsTask.name))
+                    startParameter.setTaskRequests(taskRequests)
                 }
             }
             if (extension.generateTemplateTask.get()) {
